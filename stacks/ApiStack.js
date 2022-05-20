@@ -8,5 +8,25 @@ export default class ApiStack extends sst.Stack {
     super(scope, id, props);
 
     const { table } = props;
+
+    // create the API
+    this.api = new sst.Api(this, "Api", {
+      defaultFunctionProps: {
+        environment: {
+          TABLE_NAME: table.tableName,
+        },
+      },
+      routes: {
+        "Post   /notes": "src/create.main",
+      },
+    });
+
+    // Allow the API to access the table
+    this.api.attachPermissions([table]);
+
+    // Show the API endpoint in the output
+    this.addOutputs({
+      ApiEndPoint: this.api.url,
+    });
   }
 }
