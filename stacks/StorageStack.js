@@ -1,6 +1,8 @@
 import * as sst from "@serverless-stack/resources";
 
 export default class StorageStack extends sst.Stack {
+  // public reference to bucket
+  bucket;
   // public reference to table
   table;
 
