@@ -5,7 +5,7 @@ export const main = handler(async (event) => {
   const params = {
     TableName: process.env.TABLE_NAME,
     // 'key' defines the partition key and sort key of the item to be retrieved
-    KEY: {
+    Key: {
       userId: "123", // The id of the author
       noteId: event.pathParameters.id, // The id of the note from the path
     },
