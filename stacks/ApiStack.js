@@ -1,36 +1,35 @@
-import * as sst from "@serverless-stack/resources";
+import { Api, use } from "@serverless-stack/resources";
+import { StorageStack } from "./StorageStack";
 
-export default class ApiStack extends sst.Stack {
-  // public reference to API
-  api;
+export function ApiStack({ stack, app }) {
+  const { table } = use(StorageStack);
 
-  constructor(scope, id, props) {
-    super(scope, id, props);
-
-    const { table } = props;
-
-    // create the API
-    this.api = new sst.Api(this, "Api", {
-      defaultFunctionProps: {
+  // create the API
+  const api = new Api(stack, "Api", {
+    defaults: {
+      function: {
+        permissions: [table],
         environment: {
           TABLE_NAME: table.tableName,
         },
       },
-      routes: {
-        "POST /notes": "src/create.main",
-        "GET /notes/{id}": "src/get.main",
-        "GET /notes": "src/list.main",
-        "PUT /notes/{id}": "src/update.main",
-        "DELETE /notes/{id}": "src/delete.main",
-      },
-    });
+    },
+    routes: {
+      "POST /notes": "src/create.main",
+      "GET /notes/{id}": "src/get.main",
+      "GET /notes": "src/list.main",
+      "PUT /notes/{id}": "src/update.main",
+      "DELETE /notes/{id}": "src/delete.main",
+    },
+  });
 
-    // Allow the API to access the table
-    this.api.attachPermissions([table]);
+  // Show the API endpoint in the output
+  stack.addOutputs({
+    ApiEndPoint: this.api.url,
+  });
 
-    // Show the API endpoint in the output
-    this.addOutputs({
-      ApiEndPoint: this.api.url,
-    });
-  }
+  // return the api resource
+  return {
+    api,
+  };
 }
