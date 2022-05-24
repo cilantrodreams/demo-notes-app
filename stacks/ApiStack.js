@@ -25,7 +25,7 @@ export function ApiStack({ stack, app }) {
 
   // Show the API endpoint in the output
   stack.addOutputs({
-    ApiEndPoint: this.api.url,
+    ApiEndPoint: api.url,
   });
 
   // return the api resource
