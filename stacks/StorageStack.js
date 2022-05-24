@@ -1,24 +1,20 @@
-import * as sst from "@serverless-stack/resources";
+import { Bucket, Table } from "@serverless-stack/resources";
 
-export default class StorageStack extends sst.Stack {
-  // public reference to bucket
-  bucket;
-  // public reference to table
-  table;
+export function StorageStack({ stack, app }) {
+  // create an S3 bucket
+  const bucket = new Bucket(stack, "Uploads");
 
-  constructor(scope, id, props) {
-    super(scope, id, props);
+  // Create the DynamoDB table
+  const table = new Table(stack, "Notes", {
+    fields: {
+      userId: "string",
+      noteId: "string",
+    },
+    primaryIndex: { partitionKey: "userId", sortKey: "noteId" },
+  });
 
-    // create an S3 bucket
-    this.bucket = new sst.Bucket(this, "Uploads");
-
-    // Create the DynamoDB table
-    this.table = new sst.Table(this, "Notes", {
-      fields: {
-        userId: sst.TableFieldType.STRING,
-        noteId: sst.TableFieldType.STRING,
-      },
-      primaryIndex: { partitionKey: "userId", sortKey: "noteId" },
-    });
-  }
+  return {
+    table,
+    bucket,
+  };
 }
